@@ -12,16 +12,16 @@ def scriptTimeReverse(the_day, key_day):
         the_year = the_date.strftime("%Y")
         the_mon = the_date.strftime("%Y-%m")
         the_day = the_date.strftime("%Y-%m-%d")
-        print(
-            "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/dm/chat/dm.dm_chatsess_retain_sd.hql -t "
-            + the_day
-            + " &"
-        )  # 填充Script
+        # print(
+        #     "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/dm/chat/dm.dm_chatsess_retain_sd.hql -t "
+        #     + the_day
+        #     + " &"
+        # ) # 填充Script
         print(
             "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/dm/chat/dm.dm_chatsess_source_sd.hql -t "
             + the_day
             + " &"
-        )
+        ) # 填充Script
         the_date = the_date - datetime.timedelta(days=1)  # 按照时间逆序输出
 
 
