@@ -12,18 +12,38 @@ def scriptTimeReverse(the_day, key_day):
         the_year = the_date.strftime("%Y")
         the_mon = the_date.strftime("%Y-%m")
         the_day = the_date.strftime("%Y-%m-%d")
-        # print(
-        #     "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/dm/chat/dm.dm_chatsess_retain_sd.hql -t "
-        #     + the_day
-        #     + " &"
-        # ) # 填充Script
-        print(
-            "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/dm/chat/dm.dm_chatsess_source_sd.hql -t "
-            + the_day
-            + " &"
-        ) # 填充Script
+        printScriptTime(the_year, the_mon, the_day)
         the_date = the_date - datetime.timedelta(days=1)  # 按照时间逆序输出
 
 
+# 这里填写打印脚本
+def printScriptTime(the_year, the_mon, the_day):
+    # print(
+    #     "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/dm/chat/dm.dm_chatsess_retain_sd.hql -t "
+    #     + the_day
+    #     + " &"
+    # ) # 填充Script
+    # print(
+    #     "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/dm/chat/dm.dm_chatsess_source_sd.hql -t "
+    #     + the_day
+    #     + " &"
+    # ) # 填充Script
+    # print(
+    #     "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/dm/chat/dm.dm_chatuser_complainted_sd.hql -t "
+    #     + the_day
+    #     + " &"
+    # )  # 填充Script
+    # print(
+    #     "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/dw/chat/dw.dw_chatuser_sess_cnt_sd.hql -t "
+    #     + the_day
+    #     + " &"
+    # )  # 填充Script
+    print(
+        "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/dm/chat/dm.dm_chat_match_summary_sd.hql -t "
+        + the_day
+        + " &"
+    )  # 填充Script
+
+
 if __name__ == '__main__':
-    scriptTimeReverse("2021-06-02", "2021-07-01")
+    scriptTimeReverse("2021-06-02", "2021-07-08")
