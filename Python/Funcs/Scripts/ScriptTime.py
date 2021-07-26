@@ -1,9 +1,9 @@
 # code=utf-8
-import datetime
+import time, datetime
 
 
 # 倒序输出时间(用以打印连续日期的脚本)
-def scriptTimeReverse(the_day, key_day):
+def scriptTimeReverse(the_day, key_day=time.strftime("%Y-%m-%d", time.localtime())):
     if the_day < key_day:
         the_day, key_day = key_day, the_day
     the_date = datetime.datetime.strptime(the_day, "%Y-%m-%d")
@@ -18,31 +18,12 @@ def scriptTimeReverse(the_day, key_day):
 
 # 这里填写打印脚本
 def printScriptTime(the_year, the_mon, the_day):
-    # print(
-    #     "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/dm/chat/dm.dm_chatsess_retain_sd.hql -t "
-    #     + the_day + " &"
-    # ) # 填充Script
-    # print(
-    #     "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/dm/chat/dm.dm_chatsess_source_sd.hql -t "
-    #     + the_day + " &"
-    # ) # 填充Script
-    # print(
-    #     "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/dm/chat/dm.dm_chatuser_complainted_sd.hql -t "
-    #     + the_day + " &"
-    # )  # 填充Script
-    # print(
-    #     "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/dw/chat/dw.dw_chatuser_sess_cnt_sd.hql -t "
-    #     + the_day + " &"
-    # )  # 填充Script
-    # print(
-    #     "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/dm/chat/dm.dm_chat_match_summary_sd.hql -t "
-    #     + the_day + " &"
-    # )  # 填充Script
     print(
         "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/rpt/advert/rpt.rpt_ads_quality_analyzer_sd.hql -t "
         + the_day + " &"
-    )  # 填充Script
+    ) # 填充Script
+
 
 
 if __name__ == '__main__':
-    scriptTimeReverse("2021-07-02", "2021-07-18")
+    scriptTimeReverse("2021-05-21")

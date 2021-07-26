@@ -3,5 +3,5 @@
 venv/*
 
 # Files
-*QR.png
+Python/Funcs/WeChat/QR.png
 *.DS_Store
