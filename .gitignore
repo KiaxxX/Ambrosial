@@ -3,4 +3,5 @@
 venv/*
 
 # Files
+*QR.png
 *.DS_Store
