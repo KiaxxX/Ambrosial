@@ -1,5 +1,6 @@
 # code=utf-8
-import time, datetime
+import datetime
+import time
 
 
 # 倒序输出时间(用以打印连续日期的脚本)
@@ -19,11 +20,10 @@ def scriptTimeReverse(the_day, key_day=time.strftime("%Y-%m-%d", time.localtime(
 # 这里填写打印脚本
 def printScriptTime(the_year, the_mon, the_day):
     print(
-        "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/rpt/advert/rpt.rpt_ads_quality_analyzer_sd.hql -t "
+        "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/rpt/advert/rpt.rpt_ads_quality_analyzer_dev_sd.hql -t "
         + the_day + " &"
-    ) # 填充Script
-
+    )  # 填充Script
 
 
 if __name__ == '__main__':
-    scriptTimeReverse("2021-05-21")
+    scriptTimeReverse("2021-06-02")

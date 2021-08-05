@@ -1,12 +1,19 @@
 # -*- coding: utf8 -*-
 # python >=3.8
+import base64
+import hashlib
+import hmac
+import json
+import random
+import re
+import time
+import urllib
 
-import requests, time, re, json, random, dingtalkchatbot.chatbot as dd
+import dingtalkchatbot.chatbot as dd
+import requests
 
 now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-headers = {
-    "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 10; MI 11 pro MIUI/21.8.18)"
-}
+headers = {"User-Agent": "Dalvik/2.1.0 (Linux; U; Android 10; MI 11 pro MIUI/21.8.18)"}
 
 
 # 获取登录code
@@ -217,7 +224,7 @@ def main(user, pwd, name, step):
 
     t = get_time(0)
     s_now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(t / 1000)))
-    t_1h = int(t/1000 - 3600)
+    t_1h = int(t / 1000 - 3600)
     url = f"https://api-mifit-cn.huami.com/v1/data/band_data.json?&t={t}"
     head = {
         "apptoken": app_token,
@@ -227,11 +234,9 @@ def main(user, pwd, name, step):
            f"last_deviceid=default&data_json={data_json}"
 
     response = requests.post(url, data=data, headers=head).json()
-    print(response)
-    result = "恭喜!" + response["message"] + f"修改【{name}】的运动步数为: {step}步"
+    result = "恭喜! " + response["message"] + f"修改【{name}】的运动步数为: {step}步"
     print(f"[{s_now}][INFO] " + result)
     return result
-
 
 
 # 获取时间戳
@@ -254,15 +259,15 @@ def get_app_token(login_token):
 
 
 # 钉钉机器人推送(实现钉钉机器人推送和艾特关键人)
-def push_dd(sckey, desp="", ids=[]):
+def push_dd(pkey, pmsg="", ids=[]):
     """
     推送消息到钉钉机器人
     """
-    if sckey == "":
-        print(f"[{now}][WORN]未提供sckey，不进行推送!")
+    if pkey == "":
+        print(f"[{now}][WORN]未提供pkey，不进行推送!")
     else:
-        server_url = sckey
-        param = desp
+        server_url = pkey
+        param = pmsg
 
         ding = dd.DingtalkChatbot(server_url)
         json_data = ding.send_text(msg=param, at_dingtalk_ids=ids)
@@ -272,19 +277,18 @@ def push_dd(sckey, desp="", ids=[]):
         else:
             print(f"[{now}][ERROR]推送失败：{json_data['errcode']}({json_data['errmsg']})")
 
-
 # 推送server酱(将废弃)
-def push_wx(sckey, desp="", ids=[]):
+def push_wx(pkey, pmsg="", ids=[]):
     """
     推送消息到微信
     """
-    if sckey == "":
-        print(f"[{now}][WORN]未提供sckey，不进行推送!")
+    if pkey == "":
+        print(f"[{now}][WORN]未提供pkey，不进行推送!")
     else:
-        server_url = f"https://sc.ftqq.com/{sckey}.send"
+        server_url = f"https://sc.ftqq.com/{pkey}.send"
         params = {
             "text": "小米运动 步数修改",
-            "desp": desp}
+            "pmsg": pmsg}
 
         response = requests.get(server_url, params=params)
         json_data = response.json()
@@ -294,130 +298,188 @@ def push_wx(sckey, desp="", ids=[]):
         else:
             print(f"[{now}][ERROR]推送失败：{json_data['errno']}({json_data['errmsg']})")
 
+ # 推送server酱 新版本
+def push_server(pkey, pmsg="", ids=[]):
+     """
+     推送消息到微信
+     """
+     if pkey == "":
+         print(f"[{now}][WORN]未提供pkey，不进行微信推送!")
+     else:
+         server_url = f"https://sctapi.ftqq.com/{pkey}.send"
+         params = {
+             "title": "小米运动 步数修改",
+             "pmsg": pmsg}
 
-# 推送server酱 新版本
-def push_server(sckey, desp="", ids=[]):
-    """
-    推送消息到微信
-    """
-    if sckey == "":
-        print(f"[{now}][WORN]未提供sckey，不进行微信推送!")
-    else:
-        server_url = f"https://sctapi.ftqq.com/{sckey}.send"
-        params = {
-            "title": "小米运动 步数修改",
-            "desp": desp}
+         response = requests.get(server_url, params=params)
+         json_data = response.json()
+         # print(response)
+         # print(json_data)
 
-        response = requests.get(server_url, params=params)
-        json_data = response.json()
-        # print(response)
-        # print(json_data)
+         if json_data["code"] == 0:
+             print(f"[{now}][SUCCESS]推送成功!")
+         else:
+             print(f"[{now}][ERROR]推送失败：{json_data['code']}({json_data['message']})")
 
-        if json_data["code"] == 0:
-            print(f"[{now}][SUCCESS]推送成功!")
-        else:
-            print(f"[{now}][ERROR]推送失败：{json_data['code']}({json_data['message']})")
-
-
-# 推送pushplus
+ # 推送pushplus
 def push_pushplus(token, content=""):
-    """
-    推送消息到pushplus
-    """
-    if token == "":
-        print(f"[{now}][WORN]未提供token，不进行pushplus推送!")
-    else:
-        server_url = f"https://www.pushplus.plus/send"
-        params = {
-            "token": token,
-            "title": "小米运动 步数修改",
-            "content": content}
+     """
+     推送消息到pushplus
+     """
+     if token == "":
+         print(f"[{now}][WORN]未提供token，不进行pushplus推送!")
+     else:
+         server_url = f"https://www.pushplus.plus/send"
+         params = {
+             "token": token,
+             "title": "小米运动 步数修改",
+             "content": content}
 
-        response = requests.get(server_url, params=params)
-        json_data = response.json()
+         response = requests.get(server_url, params=params)
+         json_data = response.json()
 
-        if json_data["code"] == 200:
-            print(f"[{now}][SUCCESS]推送成功!")
+         if json_data["code"] == 200:
+             print(f"[{now}][SUCCESS]推送成功!")
+         else:
+             print(f"[{now}] [ERROR]推送失败：{json_data['code']}({json_data['message']})")
+
+ # 推送tg
+def push_tg(token, chat_id, pmsg=""):
+     """
+     推送消息到TG
+     """
+     if token == "":
+         print(f"[{now}][WORN]未提供token，不进行tg推送!")
+     elif chat_id == "":
+         print(f"[{now}][WORN]未提供chat_id，不进行tg推送!")
+     else:
+         server_url = f"https://api.telegram.org/bot{token}/sendmessage"
+         params = {
+             "text": "小米运动 步数修改\n\n" + pmsg,
+             "chat_id": chat_id}
+
+         response = requests.get(server_url, params=params)
+         json_data = response.json()
+
+         if json_data["ok"] == True:
+             print(f"[{now}][SUCCESS]推送成功!")
+         else:
+             print(f"[{now}][ERROR]推送失败：{json_data['error_code']}({json_data['description']})")
+
+ # 企业微信推送
+def push_wxe(msg, usr, corpid, corpsecret, agentid=1000002):
+     base_url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?"
+     req_url = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token="
+     corpid = corpid
+     corpsecret = corpsecret
+     agentid = agentid
+
+     if agentid == 0:
+         agentid = 1000002
+
+     # 获取access_token，每次的access_token都不一样，所以需要运行一次请求一次
+     def get_access_token(base_url, corpid, corpsecret):
+         urls = base_url + "corpid=" + corpid + "&corpsecret=" + corpsecret
+         resp = requests.get(urls).json()
+         access_token = resp["access_token"]
+         return access_token
+
+     def send_message(msg, usr):
+         data = get_message(msg, usr)
+         req_urls = req_url + get_access_token(base_url, corpid, corpsecret)
+         res = requests.post(url=req_urls, data=data)
+         ret = res.json()
+         if ret["errcode"] == 0:
+             print(f"[{now}][SUCCESS]企业微信推送成功!")
+         else:
+             print(f"[{now}][ERROR]推送失败：{ret['errcode']} 错误信息：{ret['errmsg']}")
+
+     def get_message(msg, usr):
+         data = {
+             "touser": usr,
+             "toparty": "@all",
+             "totag": "@all",
+             "msgtype": "text",
+             "agentid": agentid,
+             "text": {
+                 "content": msg},
+             "safe": 0,
+             "enable_id_trans": 0,
+             "enable_duplicate_check": 0,
+             "duplicate_check_interval": 1800}
+         data = json.dumps(data)
+         return data
+
+     msg = msg
+     usr = usr
+     if corpid == "":
+         print(f"[{now}][WORN]未提供corpid，不进行企业微信推送")
+     elif corpsecret == "":
+         print(f"[{now}][WORN]未提供corpsecret，不进行企业微信推送")
+     else:
+         send_message(msg, usr)
+
+class Push:
+    def __init__(self, pmode, pmsg, ids, token):
+        # Push Key 推送开关: 钉钉、微信、企业微信等
+        # pkey = "https://oapi.dingtalk.com/robot/send?access_token" \
+        #        "=c68c392bd46d79145ffb52ef2e589f75120d42a41260de354a540080eeb8fcbe"  # 钉钉机器人推送
+        # pkey = "SCT4767TsSiDGVriYP8CCD2zbUBbvRVo"  # 微信/server酱
+        if pmode == "钉钉":
+            timestamp = str(round(time.time() * 1000))
+            secret = "SEC317f5041deddcc34b8890b0383aec4cafe231907723489feb0b91b8bd4a3307f"
+            secret_enc = secret.encode("utf-8")
+            string_to_sign = "{}\n{}".format(timestamp, secret)
+            string_to_sign_enc = string_to_sign.encode("utf-8")
+            hmac_code = hmac.new(secret_enc, string_to_sign_enc, digestmod=hashlib.sha256).digest()
+            sign = urllib.parse.quote_plus(base64.b64encode(hmac_code))
+            token = "c68c392bd46d79145ffb52ef2e589f75120d42a41260de354a540080eeb8fcbe"
+            pkey = "https://oapi.dingtalk.com/robot/send" \
+                   f"?access_token={token}" \
+                   f"&timestamp={timestamp}" \
+                   f"&sign={sign}"
+            if pkey.find("https://oapi.dingtalk.com/robot") == -1 or pkey.find("access_token") == -1:
+                print("钉钉机器人Webhook有误, 请检查!")
+            else:
+                push_dd(pkey, pmsg, ids)
+        elif pmode == "微信":
+            pkey = "SCT4767TsSiDGVriYP8CCD2zbUBbvRVo"
+            if pkey.find("SCT") == -1:
+                print("微信SCKEY有误, 请检查!")
+            push_wx(pkey, pmsg)
+        elif pmode == "Server酱":
+            # ServerChan
+            pkey = "SCT4767TsSiDGVriYP8CCD2zbUBbvRVo"
+            if pkey.find("SCT") == -1:
+                print("微信SCKEY有误, 请检查!")
+            else:
+                push_server(pkey, pmsg)
+        elif pmode == "电报":
+            tokens = token.split("@")
+            if len(tokens) == 3:
+                push_tg(tokens[0], tokens[1], pmsg)
+            else:
+                print(f"[{now}][ERROR]Token按[@]拆分后参数数量不正确!")
+        elif pmode == "企业微信":
+            tokens = token.split("-")
+            if len(tokens) == 3:
+                push_wxe(pmsg, tokens[0], tokens[1], tokens[2])
+            elif len(tokens) == 4:
+                push_wxe(pmsg, tokens[0], tokens[1], tokens[2], int(tokens[3]))
+            else:
+                print(f"[{now}][ERROR]Token按[-]拆分后参数数量不正确!")
+        elif pmode == "接口":
+            if token == "":
+                print("PushPlus Token为空, 请补充!")
+            elif token == "":
+                print("PushPlus Token为空, 请补充!")
+            else:
+                push_pushplus(token, pmsg)
+        elif pmode == "关闭":
+            print("不推送")
         else:
-            print(f"[{now}] [ERROR]推送失败：{json_data['code']}({json_data['message']})")
-
-
-# 推送tg
-def push_tg(token, chat_id, desp=""):
-    """
-    推送消息到TG
-    """
-    if token == "":
-        print(f"[{now}][WORN]未提供token，不进行tg推送!")
-    elif chat_id == "":
-        print(f"[{now}][WORN]未提供chat_id，不进行tg推送!")
-    else:
-        server_url = f"https://api.telegram.org/bot{token}/sendmessage"
-        params = {
-            "text": "小米运动 步数修改\n\n" + desp,
-            "chat_id": chat_id}
-
-        response = requests.get(server_url, params=params)
-        json_data = response.json()
-
-        if json_data["ok"] == True:
-            print(f"[{now}][SUCCESS]推送成功!")
-        else:
-            print(f"[{now}][ERROR]推送失败：{json_data['error_code']}({json_data['description']})")
-
-
-# 企业微信推送
-def wxpush(msg, usr, corpid, corpsecret, agentid=1000002):
-    base_url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?"
-    req_url = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token="
-    corpid = corpid
-    corpsecret = corpsecret
-    agentid = agentid
-
-    if agentid == 0:
-        agentid = 1000002
-
-    # 获取access_token，每次的access_token都不一样，所以需要运行一次请求一次
-    def get_access_token(base_url, corpid, corpsecret):
-        urls = base_url + "corpid=" + corpid + "&corpsecret=" + corpsecret
-        resp = requests.get(urls).json()
-        access_token = resp["access_token"]
-        return access_token
-
-    def send_message(msg, usr):
-        data = get_message(msg, usr)
-        req_urls = req_url + get_access_token(base_url, corpid, corpsecret)
-        res = requests.post(url=req_urls, data=data)
-        ret = res.json()
-        if ret["errcode"] == 0:
-            print(f"[{now}][SUCCESS]企业微信推送成功!")
-        else:
-            print(f"[{now}][ERROR]推送失败：{ret['errcode']} 错误信息：{ret['errmsg']}")
-
-    def get_message(msg, usr):
-        data = {
-            "touser": usr,
-            "toparty": "@all",
-            "totag": "@all",
-            "msgtype": "text",
-            "agentid": agentid,
-            "text": {
-                "content": msg},
-            "safe": 0,
-            "enable_id_trans": 0,
-            "enable_duplicate_check": 0,
-            "duplicate_check_interval": 1800}
-        data = json.dumps(data)
-        return data
-
-    msg = msg
-    usr = usr
-    if corpid == "":
-        print(f"[{now}][WORN]未提供corpid，不进行企业微信推送")
-    elif corpsecret == "":
-        print(f"[{now}][WORN]未提供corpsecret，不进行企业微信推送")
-    else:
-        send_message(msg, usr)
+            print(f"[{now}][ERROR]推送选项有误! 默认选择不推送")
+            exit(0)
 
 
 if __name__ == "__main__":
@@ -425,77 +487,34 @@ if __name__ == "__main__":
           f"他将持续几秒钟, 请耐心稍候!")
     print(f"[{now}][INFO]: Motion Has Started And Load And Been Running"
           f"It Will Take A Little Seconds, Please Keep Patient!")
-    # Push Mode  # 推送选项
-    # Pm = input()
-    Pm = "dd"  # 微信推送
-    if Pm == "dd":
-        sckey = "https://oapi.dingtalk.com/robot/send?access_token" \
-                "=c68c392bd46d79145ffb52ef2e589f75120d42a41260de354a540080eeb8fcbe"
-        if sckey.find("https://oapi.dingtalk.com/robot") == -1:
-            print("钉钉链接有误!")
-        if sckey.find("access_token") == -1:
-            print("钉钉token有误!")
-    elif Pm == "wx" or Pm == "nwx":
-        # ServerChan
-        sckey = "SCT4767TsSiDGVriYP8CCD2zbUBbvRVo"
-        if str(sckey) == "0":
-            sckey = ""
-    elif Pm == "tg":
-        token = input()
-        sl = token.split("@")
-        if len(sl) != 2:
-            print("tg推送参数有误!")
-    elif Pm == "qwx":
-        token = input()
-        sl = token.split("-")
-        if len(sl) < 3:
-            print("企业微信推送参数有误!")
-    elif Pm == "pp":
-        token = input()
-        if token == "":
-            print("pushplus token错误")
-    elif Pm == "off":
-        input()
-        print("不推送")
-    else:
-        print(f"[{now}][ERROR]推送选项有误!")
-        exit(0)
 
-    users = []
-    names = []
-    ids = []
-    pwds = []
 
-    # 要修改的步数，直接输入想要修改的步数值，留空为随机步数
+    # 用户步数范围: 要修改的步数，直接输入想要修改的步数值，留空为随机步数
     steps = [80980, 89980]
 
+    # 推送选项 Push Mode
+    pmode = "钉钉"
+    #
+    pmsg = "Hello! 今天的步数更新啦![摸摸]"
+    # 通知人钉钉
+    ids = ["8ke-8x04ndda6", "lkh017"]
+    # 通知token
+    token = ""
+
+    # Motion 正式运行
     if len(users) == len(pwds):
-        push = "Hello! 今天的步数更新啦![烟花]"
         for line in range(0, len(users)):
             if len(steps) == 2:
                 step = random.randint(steps[0], steps[1])
+            elif len(steps) == 1:
+                step = steps[0]
             else:
                 step = random.randint(80980, 89980)  # 自己使用的默认步数
-            step = str(int((int(now[11:13]) - random.random()) / 20 * step))
-            # step = str(int((int(now[11:13]) + int(now[14:16])/60 + int(now[17:19])/3600)/20 * step))
+
+            step = str(int((int(now[11:13]) - random.random()) / 20 * step)) # 按照[时间：时]和[随机数]计算步数
+            # step = str(int((int(now[11:13]) + int(now[14:16])/60 + int(now[17:19])/3600)/20 * step)) # 按照[时间：时分秒]计算步数
             response = main(users[line], pwds[line], names[line], step)
-            push += "\n" + response.replace("success", "成功")
-        if Pm == "dd":  # 推送选项
-            push_dd(sckey, push, ids)
-        elif Pm == "wx":
-            push_wx(sckey, push)
-        elif Pm == "nwx":
-            push_server(sckey, push)
-        elif Pm == "tg":
-            push_tg(sl[0], sl[1], push)
-        elif Pm == "qwx":
-            if len(sl) == 4:
-                wxpush(push, sl[0], sl[1], sl[2], int(sl[3]))
-            else:
-                wxpush(push, sl[0], sl[1], sl[2])
-        elif Pm == "pp":
-            push_pushplus(token, push)
-        elif Pm == "off":
-            pass
+            pmsg += "\n" + response.replace("success", "成功")
+        Push(pmode, pmsg, ids, token)
     else:
         print(f"[{now}][ERROR]用户名数和密码数不相等")
