@@ -20,7 +20,7 @@ def scriptTimeReverse(the_day, key_day=time.strftime("%Y-%m-%d", time.localtime(
 # 这里填写打印脚本
 def printScriptTime(the_year, the_mon, the_day):
     print(
-        "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/rpt/advert/rpt.rpt_ads_quality_analyzer_dev_sd.hql -t "
+        "nohup bash ${tools_dir}/beeline_exec_hql.sh -f ${root_dir}/dw_etl/rpt/chat/rpt.rpt_chat_msg_cnt_with_group_sd.hql -t "
         + the_day + " &"
     )  # 填充Script
 

@@ -1,7 +1,11 @@
-# Files Hiding
+# Project Files
 .idea/*
+
+# Env Files
 venv/*
 
-# Files
-Python/Funcs/WeChat/QR.png
+# System Files
 *.DS_Store
+
+# Secret Files
+*X.py

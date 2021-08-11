@@ -33,7 +33,8 @@ def login(user, pwd):
         "client_id": "HuaMi",
         "password": f"{pwd}",
         "redirect_uri": "https://s3-us-west-2.amazonaws.com/hm-registration/successsignin.html",
-        "token": "access"}
+        "token": "access"
+    }
     regist_res = requests.post(regist_url, data=regist_data, headers=headers, allow_redirects=False)
     try:
         location = regist_res.headers["Location"]
@@ -53,7 +54,8 @@ def login(user, pwd):
         "device_id": "default",
         "device_model": "phone",
         "grant_type": "access_token",
-        "third_name": "huami_phone"}
+        "third_name": "huami_phone"
+    }
     login_res = requests.post(login_url, data=login_data, headers=headers).json()
     login_token = login_res["token_info"]["login_token"]
     userid = login_res["token_info"]["user_id"]
@@ -228,10 +230,14 @@ def main(user, pwd, name, step):
     url = f"https://api-mifit-cn.huami.com/v1/data/band_data.json?&t={t}"
     head = {
         "apptoken": app_token,
-        "Content-Type": "application/x-www-form-urlencoded"}
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
 
-    data = f"userid={userid}&last_sync_data_time={t_1h}&device_type=0&" \
-           f"last_deviceid=default&data_json={data_json}"
+    data = f"userid={userid}" \
+           f"&last_sync_data_time={t_1h}" \
+           f"&device_type=0" \
+           f"&last_deviceid=default" \
+           f"&data_json={data_json}"
 
     response = requests.post(url, data=data, headers=head).json()
     result = "恭喜! " + response["message"] + f"修改【{name}】的运动步数为: {step}步"
@@ -249,8 +255,10 @@ def get_time(second):
 
 # 获取app_token
 def get_app_token(login_token):
-    url = f"https://account-cn.huami.com/v1/client/app_tokens?app_name=com.xiaomi.hm.health&dn=api-user.huami.com" \
-          f"%2Capi-mifit.huami.com%2Capp-analytics.huami.com&login_token={login_token}"
+    url = f"https://account-cn.huami.com/v1/client/app_tokens" \
+          f"?app_name=com.xiaomi.hm.health" \
+          f"&dn=api-user.huami.com%2Capi-mifit.huami.com%2Capp-analytics.huami.com" \
+          f"&login_token={login_token}"
     response = requests.get(url, headers=headers).json()
     app_token = response["token_info"]["app_token"]
     # print("app_token获取成功!")
@@ -277,6 +285,7 @@ def push_dd(pkey, pmsg="", ids=[]):
         else:
             print(f"[{now}][ERROR]推送失败：{json_data['errcode']}({json_data['errmsg']})")
 
+
 # 推送server酱(将废弃)
 def push_wx(pkey, pmsg="", ids=[]):
     """
@@ -288,7 +297,8 @@ def push_wx(pkey, pmsg="", ids=[]):
         server_url = f"https://sc.ftqq.com/{pkey}.send"
         params = {
             "text": "小米运动 步数修改",
-            "pmsg": pmsg}
+            "pmsg": pmsg
+        }
 
         response = requests.get(server_url, params=params)
         json_data = response.json()
@@ -298,126 +308,133 @@ def push_wx(pkey, pmsg="", ids=[]):
         else:
             print(f"[{now}][ERROR]推送失败：{json_data['errno']}({json_data['errmsg']})")
 
- # 推送server酱 新版本
+
+# 推送server酱 新版本
 def push_server(pkey, pmsg="", ids=[]):
-     """
+    """
      推送消息到微信
      """
-     if pkey == "":
-         print(f"[{now}][WORN]未提供pkey，不进行微信推送!")
-     else:
-         server_url = f"https://sctapi.ftqq.com/{pkey}.send"
-         params = {
-             "title": "小米运动 步数修改",
-             "pmsg": pmsg}
+    if pkey == "":
+        print(f"[{now}][WORN]未提供pkey，不进行微信推送!")
+    else:
+        server_url = f"https://sctapi.ftqq.com/{pkey}.send"
+        params = {
+            "title": "小米运动 步数修改",
+            "pmsg": pmsg
+        }
 
-         response = requests.get(server_url, params=params)
-         json_data = response.json()
-         # print(response)
-         # print(json_data)
+        response = requests.get(server_url, params=params)
+        json_data = response.json()
+        # print(response)
+        # print(json_data)
 
-         if json_data["code"] == 0:
-             print(f"[{now}][SUCCESS]推送成功!")
-         else:
-             print(f"[{now}][ERROR]推送失败：{json_data['code']}({json_data['message']})")
+        if json_data["code"] == 0:
+            print(f"[{now}][SUCCESS]推送成功!")
+        else:
+            print(f"[{now}][ERROR]推送失败：{json_data['code']}({json_data['message']})")
 
- # 推送pushplus
+
+# 推送pushplus
 def push_pushplus(token, content=""):
-     """
+    """
      推送消息到pushplus
      """
-     if token == "":
-         print(f"[{now}][WORN]未提供token，不进行pushplus推送!")
-     else:
-         server_url = f"https://www.pushplus.plus/send"
-         params = {
-             "token": token,
-             "title": "小米运动 步数修改",
-             "content": content}
+    if token == "":
+        print(f"[{now}][WORN]未提供token，不进行pushplus推送!")
+    else:
+        server_url = f"https://www.pushplus.plus/send"
+        params = {
+            "token": token,
+            "title": "小米运动 步数修改",
+            "content": content}
 
-         response = requests.get(server_url, params=params)
-         json_data = response.json()
+        response = requests.get(server_url, params=params)
+        json_data = response.json()
 
-         if json_data["code"] == 200:
-             print(f"[{now}][SUCCESS]推送成功!")
-         else:
-             print(f"[{now}] [ERROR]推送失败：{json_data['code']}({json_data['message']})")
+        if json_data["code"] == 200:
+            print(f"[{now}][SUCCESS]推送成功!")
+        else:
+            print(f"[{now}] [ERROR]推送失败：{json_data['code']}({json_data['message']})")
 
- # 推送tg
+
+# 推送tg
 def push_tg(token, chat_id, pmsg=""):
-     """
+    """
      推送消息到TG
      """
-     if token == "":
-         print(f"[{now}][WORN]未提供token，不进行tg推送!")
-     elif chat_id == "":
-         print(f"[{now}][WORN]未提供chat_id，不进行tg推送!")
-     else:
-         server_url = f"https://api.telegram.org/bot{token}/sendmessage"
-         params = {
-             "text": "小米运动 步数修改\n\n" + pmsg,
-             "chat_id": chat_id}
+    if token == "":
+        print(f"[{now}][WORN]未提供token，不进行tg推送!")
+    elif chat_id == "":
+        print(f"[{now}][WORN]未提供chat_id，不进行tg推送!")
+    else:
+        server_url = f"https://api.telegram.org/bot{token}/sendmessage"
+        params = {
+            "text": "小米运动 步数修改\n\n" + pmsg,
+            "chat_id": chat_id
+        }
 
-         response = requests.get(server_url, params=params)
-         json_data = response.json()
+        response = requests.get(server_url, params=params)
+        json_data = response.json()
 
-         if json_data["ok"] == True:
-             print(f"[{now}][SUCCESS]推送成功!")
-         else:
-             print(f"[{now}][ERROR]推送失败：{json_data['error_code']}({json_data['description']})")
+        if json_data["ok"] == True:
+            print(f"[{now}][SUCCESS]推送成功!")
+        else:
+            print(f"[{now}][ERROR]推送失败：{json_data['error_code']}({json_data['description']})")
 
- # 企业微信推送
+
+# 企业微信推送
 def push_wxe(msg, usr, corpid, corpsecret, agentid=1000002):
-     base_url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?"
-     req_url = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token="
-     corpid = corpid
-     corpsecret = corpsecret
-     agentid = agentid
+    base_url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?"
+    req_url = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token="
+    corpid = corpid
+    corpsecret = corpsecret
+    agentid = agentid
 
-     if agentid == 0:
-         agentid = 1000002
+    if agentid == 0:
+        agentid = 1000002
 
-     # 获取access_token，每次的access_token都不一样，所以需要运行一次请求一次
-     def get_access_token(base_url, corpid, corpsecret):
-         urls = base_url + "corpid=" + corpid + "&corpsecret=" + corpsecret
-         resp = requests.get(urls).json()
-         access_token = resp["access_token"]
-         return access_token
+    # 获取access_token，每次的access_token都不一样，所以需要运行一次请求一次
+    def get_access_token(base_url, corpid, corpsecret):
+        urls = base_url + "corpid=" + corpid + "&corpsecret=" + corpsecret
+        resp = requests.get(urls).json()
+        access_token = resp["access_token"]
+        return access_token
 
-     def send_message(msg, usr):
-         data = get_message(msg, usr)
-         req_urls = req_url + get_access_token(base_url, corpid, corpsecret)
-         res = requests.post(url=req_urls, data=data)
-         ret = res.json()
-         if ret["errcode"] == 0:
-             print(f"[{now}][SUCCESS]企业微信推送成功!")
-         else:
-             print(f"[{now}][ERROR]推送失败：{ret['errcode']} 错误信息：{ret['errmsg']}")
+    def send_message(msg, usr):
+        data = get_message(msg, usr)
+        req_urls = req_url + get_access_token(base_url, corpid, corpsecret)
+        res = requests.post(url=req_urls, data=data)
+        ret = res.json()
+        if ret["errcode"] == 0:
+            print(f"[{now}][SUCCESS]企业微信推送成功!")
+        else:
+            print(f"[{now}][ERROR]推送失败：{ret['errcode']} 错误信息：{ret['errmsg']}")
 
-     def get_message(msg, usr):
-         data = {
-             "touser": usr,
-             "toparty": "@all",
-             "totag": "@all",
-             "msgtype": "text",
-             "agentid": agentid,
-             "text": {
-                 "content": msg},
-             "safe": 0,
-             "enable_id_trans": 0,
-             "enable_duplicate_check": 0,
-             "duplicate_check_interval": 1800}
-         data = json.dumps(data)
-         return data
+    def get_message(msg, usr):
+        data = {
+            "touser": usr,
+            "toparty": "@all",
+            "totag": "@all",
+            "msgtype": "text",
+            "agentid": agentid,
+            "text": {"content": msg},
+            "safe": 0,
+            "enable_id_trans": 0,
+            "enable_duplicate_check": 0,
+            "duplicate_check_interval": 1800
+        }
+        data = json.dumps(data)
+        return data
 
-     msg = msg
-     usr = usr
-     if corpid == "":
-         print(f"[{now}][WORN]未提供corpid，不进行企业微信推送")
-     elif corpsecret == "":
-         print(f"[{now}][WORN]未提供corpsecret，不进行企业微信推送")
-     else:
-         send_message(msg, usr)
+    msg = msg
+    usr = usr
+    if corpid == "":
+        print(f"[{now}][WORN]未提供corpid，不进行企业微信推送")
+    elif corpsecret == "":
+        print(f"[{now}][WORN]未提供corpsecret，不进行企业微信推送")
+    else:
+        send_message(msg, usr)
+
 
 class Push:
     def __init__(self, pmode, pmsg, ids, token):
@@ -488,16 +505,22 @@ if __name__ == "__main__":
     print(f"[{now}][INFO]: Motion Has Started And Load And Been Running"
           f"It Will Take A Little Seconds, Please Keep Patient!")
 
-
+    # 用户名: 电话号码
+    users = []
+    # 用户姓名
+    names = []
+    # 用户密码
+    pwds = []
     # 用户步数范围: 要修改的步数，直接输入想要修改的步数值，留空为随机步数
-    steps = [80980, 89980]
+    # steps = [80980, 89980]
+    steps = [40980, 48980]
 
     # 推送选项 Push Mode
     pmode = "钉钉"
     #
     pmsg = "Hello! 今天的步数更新啦![摸摸]"
     # 通知人钉钉
-    ids = ["8ke-8x04ndda6", "lkh017"]
+    ids = []
     # 通知token
     token = ""
 
@@ -510,8 +533,7 @@ if __name__ == "__main__":
                 step = steps[0]
             else:
                 step = random.randint(80980, 89980)  # 自己使用的默认步数
-
-            step = str(int((int(now[11:13]) - random.random()) / 20 * step)) # 按照[时间：时]和[随机数]计算步数
+            step = str(int((int(now[11:13]) - random.random()) / 20 * step))  # 按照[时间：时]和[随机数]计算步数
             # step = str(int((int(now[11:13]) + int(now[14:16])/60 + int(now[17:19])/3600)/20 * step)) # 按照[时间：时分秒]计算步数
             response = main(users[line], pwds[line], names[line], step)
             pmsg += "\n" + response.replace("success", "成功")
