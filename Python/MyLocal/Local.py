@@ -2,6 +2,12 @@
 
 
 # 不换行print
+import datetime
+
+import redis as redis
+import requests
+
+
 def print_line(p):
     print(p, end="")
     return
@@ -55,12 +61,12 @@ def strFormat_func(p, y):
 
 # 三引号使用尝试
 def strThreeQuote_func():
-    str = '''你好 -- 
+    str = """你好 -- 
 你好  你好
-    你好  你好\n'''
-    strR = R'''你好 -- \
+    你好  你好\n"""
+    strR = R"""你好 -- \
 你好  你好
-    你好  %s\n''' % "你好"
+    你好  %s\n""" % "你好"
     print(str)
     print("==========")
     print(strR)
@@ -88,7 +94,17 @@ def dict_func(p):
     print("dict is:" + str(p))
 
 
-if __name__ == '__main__':
+def send_msg(content, user):
+    curl = "http://prod-soul-data-server-dingdingnotice.soulapp-inc.cn/sendDingdingMsg"
+    data = "{\"username\":\"soul_data\",\"msg\":\"" \
+           + content + "\",\"pswd\":\"sPaYoiPDC\",\"sendUserList\":[\"" \
+           + user + "\"]}"
+    print(data)
+    head = {"content-type": "application/json", "Accept-Charset": "UTF-8"}
+    requests.post(url=curl, data=data.encode("utf-8"), headers=head)
+
+
+if __name__ == "__main__":
     # while_func(100)
     # for_func("myName")
     # cicle_func(50)
@@ -97,5 +113,17 @@ if __name__ == '__main__':
     # strThreeQuote_func()
     # strTitle_func("my Name Is Karsa")
     # list_func(["Likaihua ", "is ", "a ", "boy ", "!"])
-    dict_func({"name" : "Likaihua ","action" : "is ","quantifier" : "a ","noun" : "boy ","punctuation" : "!"})
+    # dict_func({"name": "Likaihua ", "action": "is ", "quantifier": "a ", "noun": "boy ", "punctuation": "!"})
+    # send_msg("测试", "likaihua")
+    str = ""
+    str = str + "123"
+    print(str)
+
+    now = datetime.datetime.now() - datetime.timedelta(days=1)
+    month_fst = datetime.datetime(now.year, now.month, 1).strftime("%Y-%m-%d")
+    month_end = (datetime.datetime(now.year, now.month + 1, 1) - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+    yesterday = (now - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+    print(month_fst)
+    print(month_end)
     print_line("===Func Is Over, Bay-bay===")
+
