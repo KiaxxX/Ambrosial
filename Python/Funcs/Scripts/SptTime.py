@@ -16,17 +16,18 @@ def scriptTimeReverse(the_day, key_day=time.strftime("%Y-%m-%d", time.localtime(
         the_mon = the_date.strftime("%Y-%m")
         the_day = the_date.strftime("%Y-%m-%d")
         printScriptTime(the_year, the_mon, the_day)
-        the_date = the_date + datetime.timedelta(days=1) # 按照时间顺序输出
+        the_date = the_date + datetime.timedelta(days=1)    # 按照时间顺序输出
         # the_date = the_date - datetime.timedelta(days=1)  # 按照时间逆序输出
+
 
 # 这里填写打印脚本
 def printScriptTime(the_year, the_mon, the_day):
     print(
         "nohup" + " "
-        + "bash ${tools_dir}/imp_data.sh -f ${root_dir}/dw_etl/imp/advert/ods_ads_finance_order_sd.conf -t"  # 填充Script
+        + "bash ${tools_dir}/beeline_exec_hql.sh -f  ${root_dir}/dw_etl/dw/chat/dw.dw_chatsess_source_sd.hql -t"  # 填充Script
         + " " + the_day + " " + "&"
     )
 
 
 if __name__ == '__main__':
-    scriptTimeReverse("2021-09-01")
+    scriptTimeReverse("2019-10-18", "2021-03-08")
