@@ -104,6 +104,20 @@ def send_msg(content, user):
     requests.post(url=curl, data=data.encode("utf-8"), headers=head)
 
 
+def getTodayWeekYearMonth():
+    now = datetime.datetime.now() - datetime.timedelta(days=1)
+    month_fst = datetime.datetime(now.year, now.month, 1).strftime("%Y-%m-%d")
+    month_end = (datetime.datetime(now.year, now.month + 1, 1) - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+    yesterday = (now - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+    print(month_fst)
+    print(month_end)
+
+    now = datetime.datetime.now()
+    today = now.strftime("%Y-%m-%d")
+    weekday = now.weekday()+1
+    print("今天是周"+ str(weekday) + "!")
+
+
 if __name__ == "__main__":
     # while_func(100)
     # for_func("myName")
@@ -115,15 +129,6 @@ if __name__ == "__main__":
     # list_func(["Likaihua ", "is ", "a ", "boy ", "!"])
     # dict_func({"name": "Likaihua ", "action": "is ", "quantifier": "a ", "noun": "boy ", "punctuation": "!"})
     # send_msg("测试", "likaihua")
-    str = ""
-    str = str + "123"
-    print(str)
-
-    now = datetime.datetime.now() - datetime.timedelta(days=1)
-    month_fst = datetime.datetime(now.year, now.month, 1).strftime("%Y-%m-%d")
-    month_end = (datetime.datetime(now.year, now.month + 1, 1) - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-    yesterday = (now - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-    print(month_fst)
-    print(month_end)
+    getTodayWeekYearMonth()
     print_line("===Func Is Over, Bay-bay===")
 
