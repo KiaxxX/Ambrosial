@@ -1,6 +1,6 @@
 # code=udf-8
 import datetime
-from Python.Funcs.SendMails import SendMailX
+from Python.Funcs.SendMails import SendMailL
 
 
 def is_number(s):
