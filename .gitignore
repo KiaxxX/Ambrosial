@@ -1,11 +1,8 @@
 # Project Files
 .idea/
 
-# Env Files
-venv/*
-
-# System Files
+# System Dicuments
 *.DS_Store
 
-# Secret Files
-*X.py
+# Special Dicuments
+*X.*
