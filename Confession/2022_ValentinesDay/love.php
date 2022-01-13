@@ -18,8 +18,8 @@ if(isset($_GET['add']) && isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower
 	if(preg_match('/^[\w\-]{3,30}$/',$textHref) == 0){
 		$return = array ('status'=>0,'msg'=>'←格式不正确');
 	}else{		
-		$fp = fopen(dirname(__FILE__) . "/loveTpl.html","r"); // 模版文件
-		$str = fread($fp,filesize(dirname(__FILE__) . "/loveTpl.html"));
+		$fp = fopen(dirname(__FILE__) . "/love.html","r"); // 模版文件
+		$str = fread($fp,filesize(dirname(__FILE__) . "/love.html"));
 		for($o=1;$o<79;$o++){
 			$str = str_replace("{text_$o}",$textShow[$o],$str);
 		}
