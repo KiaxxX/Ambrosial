@@ -29,4 +29,7 @@ if __name__ == "__main__":
     # pmsg += "\n\t因任务步数增多, 支付宝渠道不接受频繁的步数变更, 任务将在3日内作出合理化调整!" \
     #         "\n\t任务临时暂停, 初步订7日后开放" \
     #         "\n\t具体调整完成时间将在此群同步, 敬请关注......"
-    push_dd(pkey, pmsg)
+    pmsg = "Something ERROR! Please chack in!"
+    while(True):
+        time.sleep(3600)
+        push_dd(pkey, pmsg, all=True)
