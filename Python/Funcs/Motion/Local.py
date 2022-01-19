@@ -31,5 +31,7 @@ if __name__ == "__main__":
     #         "\n\t具体调整完成时间将在此群同步, 敬请关注......"
     pmsg = "Something ERROR! Please chack in!"
     while(True):
-        time.sleep(3600)
-        push_dd(pkey, pmsg, all=True)
+        # time.sleep(3600)
+        # push_dd(pkey, pmsg, all=True)
+        push_dd(pkey, "测试!", mps=[17864307818])
+        time.sleep(7)

@@ -267,7 +267,7 @@ def get_app_token(login_token):
 
 
 # 钉钉机器人推送(实现钉钉机器人推送和艾特关键人)
-def push_dd(pkey, pmsg="", mbs=[], ids=[], all=False):
+def push_dd(pkey, pmsg="", mps=[], ids=[], all=False):
     """
     推送消息到钉钉机器人
     """
@@ -278,7 +278,7 @@ def push_dd(pkey, pmsg="", mbs=[], ids=[], all=False):
         param = pmsg
 
         ding = dd.DingtalkChatbot(server_url)
-        json_data = ding.send_text(msg=param, is_at_all=all, at_mobiles=mbs, at_dingtalk_ids=ids)
+        json_data = ding.send_text(msg=param, is_at_all=all, at_mobiles=mps, at_dingtalk_ids=ids)
 
         if json_data["errcode"] == 0:
             print(f"[{now}][SUCCESS]推送成功!")
