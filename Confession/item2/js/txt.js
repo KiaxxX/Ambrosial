@@ -27,7 +27,7 @@ BLENDING = true;
 /* if empty the text will be a random number */
 var TEXT;
 num = 0;
-TEXTArray = ["有你","在我","身边","真好","而我","还未","遇到","你啊"];
+TEXTArray = ["有你","在我","身边","一生","永远","幸福","珍爱","不离","不弃",""];
 
 QUALITY_TO_FONT_SIZE = [5, 12, 30, 45, 200, 350];
 QUALITY_TO_SCALE = [20, 6, 4, 1, 0.9, 1.5];
@@ -92,12 +92,12 @@ window.onload = function () {
 
 		tctx.font = "bold " + QUALITY_TO_FONT_SIZE[QUALITY] + "px " + FANCY_FONT;
 
-		//tctx.textAlign='center';//文本水平对齐方式
+		//tctx.textAlign='center';//??????????
 		//tctx.textBaseline='middle';
 
 		//tctx.strokeStyle = "black";
 		tctx.fillStyle = "#f00";
-		//tctx.strokeText(TEXT,20, 60);
+		// tctx.strokeText(TEXT,20, 60);
 		tctx.fillText(TEXT, 30, 60);
 
 		image_data = tctx.getImageData(0, 0, W, H);
