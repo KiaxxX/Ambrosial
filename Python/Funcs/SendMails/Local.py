@@ -1,6 +1,6 @@
 # code=udf-8
 import datetime
-from Python.Funcs.SendMails import SendMailLo as sendMail
+from Python.Funcs.SendMails import SendMail as sendMail
 
 
 def is_number(s):
@@ -27,9 +27,9 @@ def send(now_time):
     """
         邮件内容的编辑!
     """
-    rows = '''2021-05-01 04:12:30 坐公交车到王超家 济南,文韶佳缘 王超,李清华,王梓瑶,李凯华 100 0.9612087818 必须 
-2021-05-01 04:12:30  济南,文韶佳缘 王超,李清华,王梓瑶,李凯华 100 0.0612087818 必须 
-2021-05-01 04:12:30 坐公交车到王超家 济南,文韶佳缘 王超,李清华,王梓瑶,李凯华 100  必须 '''
+    rows = '''2021-05-01 04:12:30 坐公交车到家 济南 李凯华 100 0.9612087818 必须 
+2021-05-01 04:12:30  济南 李凯华 100 0.0612087818 必须 
+2021-05-01 04:12:30 坐公交车到家 济南 李凯华 100  必须 '''
     html_str = ""
     html_str += """
 <h3> 我的日历 %s</h3><table border=1>
@@ -64,7 +64,7 @@ def send(now_time):
     html_str += "\n\t</tr>\n</h3>"
 
     print(html_str)
-    sendMail.sendmail(["likaihua@soulapp.cn"], "测试邮件[%s]" % datetime.datetime.now().strftime("%Y-%m-%d"), html_str)
+    sendMail.sendmail(["name@soulapp.cn"], "测试邮件[%s]" % datetime.datetime.now().strftime("%Y-%m-%d"), html_str)
 
 
 if __name__ == '__main__':
