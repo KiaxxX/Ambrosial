@@ -130,5 +130,5 @@ if __name__ == "__main__":
     # dict_func({"name": "Likaihua ", "action": "is ", "quantifier": "a ", "noun": "boy ", "punctuation": "!"})
     # send_msg("测试", "likaihua")
     getTodayWeekYearMonth()
-    print_line("===Func Is Over, Bay-bay=== ")
+    print_line("===Func Is Over, Bay-bay===")
 
