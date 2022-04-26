@@ -1,6 +1,6 @@
 # Project Files
 .idea/
-*/ignore/
+ignore/
 
 # System Dicuments
 *.DS_Store
