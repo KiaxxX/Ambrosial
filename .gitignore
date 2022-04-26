@@ -1,8 +1,6 @@
 # Project Files
 .idea/
+*/ignore/
 
 # System Dicuments
 *.DS_Store
-
-# Special Dicuments
-*.local.*
